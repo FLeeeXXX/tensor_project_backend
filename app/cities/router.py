@@ -1,10 +1,11 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
 from fastapi_cache.decorator import cache
 from redis import asyncio as aioredis
-from openweather.service import OpenWeatherHTTPClient
-from config import settings
+from cities.schemas import SCity
+from openweather.schemas import SWeather
+from openweather.weather import get_weather_city
 import json
 
 
@@ -17,7 +18,7 @@ router = APIRouter(
 # Декомпозировать или спрятать сложную логику
 @router.get("/get_cities")
 @cache(expire=120)
-async def get_cities(city: str):
+async def get_cities(city: str) -> list[SCity]:
     cities_str = await cache_backend.get("cities")
     cities = json.loads(cities_str) if cities_str else []
     search_results = [_city for _city in cities if city.lower() in _city["city_name"].lower()]
@@ -26,10 +27,9 @@ async def get_cities(city: str):
 
 @router.get("/get_weather")
 @cache(expire=120)
-async def get_weather(lat: str, lon: str):
-    open_weather_client = OpenWeatherHTTPClient(base_url="https://api.openweathermap.org",
-                                                api_key=settings.OW_KEY)
-    return await open_weather_client.get_weather(lat=lat, lon=lon)
+async def get_weather(lat: str, lon: str) -> list[SWeather]:
+    return await get_weather_city(lat=lat, lon=lon)
+
 
 
 # Загрузка redis и городов при старте сервера

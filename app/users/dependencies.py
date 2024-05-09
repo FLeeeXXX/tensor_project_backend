@@ -8,7 +8,7 @@ from users.schemas import SUsersRead
 
 
 def get_token(request: Request) -> str:
-    token = request.cookies.get("booking_access_token")
+    token = request.cookies.get("weather_access_token")
     if token == None:
         raise TokenAbsentException
     return token

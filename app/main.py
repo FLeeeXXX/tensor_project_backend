@@ -11,7 +11,7 @@ app.include_router(cities_router)
 
 
 origins = [
-    "*",
+    "http://localhost:3000",
 ]
 
 
