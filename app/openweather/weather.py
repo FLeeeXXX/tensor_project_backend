@@ -5,7 +5,7 @@ from openweather.schemas import SWeather
 from datetime import datetime
 
 # Может быть можно обыграть зависимостями, если нет, то файл переименовать
-
+@cache(expire=120)
 async def get_weather_city(lat: str, lon: str) -> list[SWeather]:
     open_weather_client = OpenWeatherHTTPClient(base_url="https://api.openweathermap.org",
                                                 api_key=settings.OW_KEY)
