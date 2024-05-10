@@ -2,12 +2,11 @@ from fastapi_cache.decorator import cache
 from openweather.service import OpenWeatherHTTPClient
 from config import settings
 from openweather.schemas import SWeather
-import datetime
+from datetime import datetime
 
 # Может быть можно обыграть зависимостями, если нет, то файл переименовать
 
-@cache(expire=120)
-async def get_weather_city(lat: str, lon: str):
+async def get_weather_city(lat: str, lon: str) -> list[SWeather]:
     open_weather_client = OpenWeatherHTTPClient(base_url="https://api.openweathermap.org",
                                                 api_key=settings.OW_KEY)
     data = await open_weather_client.get_weather(lat=lat, lon=lon)
@@ -18,55 +17,69 @@ def filter_weather(data: object) -> list[SWeather]:
     result = []
 
     for item in data['list']:
-        date = datetime.datetime.fromtimestamp(item['dt']).strftime('%Y-%m-%d')
-        result_item = next((x for x in result if x["date"] == date), None)
+        date = datetime.fromtimestamp(item['dt']).strftime('%Y-%m-%d')
+        found_date = False
 
-        if not result_item:
-            result_item = {
+        for idx, r in enumerate(result):
+            if r['date'] == date:
+                found_date = True
+                r['temp_min'] = round(min(r['temp_min'], item['main']['temp_min']), 0)
+                r['temp_max'] = round(max(r['temp_max'], item['main']['temp_max']), 0)
+                break
+
+        if not found_date:
+            result.append({
                 "date": date,
                 "temp_min": round(item['main']['temp_min'], 0),
                 "temp_max": round(item['main']['temp_max'], 0),
                 "weather": item['weather'][0]['description'],
-                "periods": {
-                    "morning": {},
-                    "afternoon": {},
-                    "evening": {}
-                }
+                "periods": {}
+            })
+
+        time = datetime.strptime(item['dt_txt'], "%Y-%m-%d %H:%M:%S")
+
+        if int(time.hour) == 0:
+            time = time.replace(hour=23)
+
+        period = ''
+
+        if 6 <= time.hour < 12:
+            period = 'morning'
+        elif 12 <= time.hour < 18:
+            period = 'afternoon'
+        elif 18 <= time.hour < 24:
+            period = 'evening'
+
+        if period and period not in result[-1]['periods']:
+            result[-1]['periods'][period] = {
+                'wind_speed': round(item['wind']['speed'], 0),
+                'humidity': round(item['main']['humidity'], 0),
+                'feels_like': round(item['main']['feels_like'], 0),
+                'temp_min': round(item['main']['temp_min'], 0),
+                'temp_max': round(item['main']['temp_max'], 0),
+                'weather': item['weather'][0]['description'],
+                'weather_counts': {item['weather'][0]['description']: 1},
+                'count': 1
             }
-            result.append(result_item)
-        else:
-            result_item["temp_min"] = round(min(result_item["temp_min"], item['main']['temp_min']), 0)
-            result_item["temp_max"] = round(max(result_item["temp_max"], item['main']['temp_max']), 0)
+        elif period:
+            result[-1]['periods'][period]['wind_speed'] += round(item['wind']['speed'], 0)
+            result[-1]['periods'][period]['humidity'] += round(item['main']['humidity'], 0)
+            result[-1]['periods'][period]['feels_like'] += round(item['main']['feels_like'], 0)
+            result[-1]['periods'][period]['temp_min'] = round(min(result[-1]['periods'][period]['temp_min'], item['main']['temp_min']), 0)
+            result[-1]['periods'][period]['temp_max'] = round(max(result[-1]['periods'][period]['temp_max'], item['main']['temp_max']), 0)
+            result[-1]['periods'][period]['count'] += 1
 
-        hour = datetime.datetime.fromtimestamp(item['dt']).hour
-        if 6 <= hour < 12:
-            period = "morning"
-        elif 12 <= hour < 18:
-            period = "afternoon"
-        elif 18 <= hour < 24:
-            period = "evening"
-        else:
-            continue
+            weather_counts = result[-1]['periods'][period]['weather_counts']
+            weather_counts[item['weather'][0]['description']] = weather_counts.get(item['weather'][0]['description'], 0) + 1
+            most_common_weather = max(weather_counts.items(), key=lambda x: x[1])[0]
+            result[-1]['periods'][period]['weather'] = most_common_weather
 
-        period_data = result_item["periods"][period]
-        keys = ["wind_speed", "humidity", "feels_like"]
-        for key in keys:
-            if key not in period_data:
-                period_data[key] = []
-            period_data[key].append(item['main'][key] if key != "wind_speed" else item["wind"]["speed"])
-
-        period_data["temp_min"] = round(min(period_data.get("temp_min", item['main']['temp_min']), item['main']['temp_min']), 0)
-        period_data["temp_max"] = round(max(period_data.get("temp_max", item['main']['temp_max']), item['main']['temp_max']), 0)
-        period_data["weather"] = item['weather'][0]['description']
-
-    # Фильтруем результаты, оставляя только те дни, у которых есть данные во всех трех периодах
-    result = [item for item in result if all(period for period in item["periods"].values())]
-
-    for item in result:
-        for period, data in item["periods"].items():
-            for key in ["wind_speed", "humidity", "feels_like"]:
-                if key in data and isinstance(data[key], list):
-                    data[key] = round(sum(data[key]) / len(data[key]), 0)
+    for idx, value in enumerate(result):
+        for period, data in value['periods'].items():
+            data['wind_speed'] = round(data['wind_speed'] / data['count'], 0)
+            data['humidity'] = round(data['humidity'] / data['count'], 0)
+            data['feels_like'] = round(data['feels_like'] / data['count'], 0)
+            del data['count']
+            del data['weather_counts']
 
     return result
-
