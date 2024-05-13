@@ -44,11 +44,11 @@ def filter_weather(data: object) -> list[SWeather]:
         period = ''
 
         if 6 <= time.hour < 12:
-            period = 'morning'
+            period = 'Утром'
         elif 12 <= time.hour < 18:
-            period = 'afternoon'
+            period = 'Днем'
         elif 18 <= time.hour < 24:
-            period = 'evening'
+            period = 'Вечером'
 
         if period and period not in result[-1]['periods']:
             result[-1]['periods'][period] = {
