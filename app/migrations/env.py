@@ -5,12 +5,12 @@ from sqlalchemy import pool
 
 from alembic import context
 
-from database import Base
-from config import settings
-from clothes.models import Clothes
-from clothes_types.models import ClothesTypes
-from users.models import Users
-from weathers.models import Weathers
+from app.database import Base
+from app.config import settings
+from app.clothes.models import Clothes
+from app.clothes_types.models import ClothesTypes
+from app.users.models import Users
+from app.weathers.models import Weathers
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

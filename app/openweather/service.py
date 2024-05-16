@@ -1,10 +1,10 @@
-from fastapi_cache.decorator import cache
-from http_client.base import HTTPClient
-from exceptions import ServerNetworkException
+# from fastapi_cache.decorator import cache
+from app.http_client.base import HTTPClient
+from app.exceptions import ServerNetworkException
 
 
 class OpenWeatherHTTPClient(HTTPClient):
-    @cache(expire=120)
+    # @cache(expire=120)
     async def get_weather(self, lat: str, lon: str):
         try:
             async with self._session.get(

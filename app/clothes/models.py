@@ -1,5 +1,6 @@
-from database import Base
+from app.database import Base
 from sqlalchemy import Column, Integer, String, ForeignKey
+
 
 class Clothes(Base):
     __tablename__ = "clothes"

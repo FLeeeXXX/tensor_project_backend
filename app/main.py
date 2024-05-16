@@ -1,8 +1,8 @@
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from users.router import router as users_router
-from cities.router import router as cities_router
+from app.users.router import router as users_router
+from app.cities.router import router as cities_router
 
 
 app = FastAPI()
@@ -29,5 +29,5 @@ app.add_middleware(
 
 
 # потом main:app поменять на app и удалить reload (если нужно)
-if __name__ == "__main__":
-    uvicorn.run("main:app", reload=True)
+# if __name__ == "__main__":
+#     uvicorn.run("main:app", reload=True)

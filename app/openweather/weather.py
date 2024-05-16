@@ -1,11 +1,11 @@
-from fastapi_cache.decorator import cache
-from openweather.service import OpenWeatherHTTPClient
-from config import settings
-from openweather.schemas import SWeather
+# from fastapi_cache.decorator import cache
+from app.openweather.service import OpenWeatherHTTPClient
+from app.config import settings
+from app.openweather.schemas import SWeather
 from datetime import datetime
 
 # Может быть можно обыграть зависимостями, если нет, то файл переименовать
-@cache(expire=120)
+# @cache(expire=120)
 async def get_weather_city(lat: str, lon: str) -> list[SWeather]:
     open_weather_client = OpenWeatherHTTPClient(base_url="https://api.openweathermap.org",
                                                 api_key=settings.OW_KEY)

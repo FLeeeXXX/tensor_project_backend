@@ -2,8 +2,8 @@ from jose import jwt
 from datetime import datetime, timedelta
 from pydantic import EmailStr
 from passlib.context import CryptContext
-from users.service import UsersService
-from config import settings
+from app.users.service import UsersService
+from app.config import settings
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 

@@ -5,9 +5,10 @@ RUN mkdir /weather
 WORKDIR /weather
 
 COPY requirements.txt .
+COPY cities.json .
 
 RUN pip install -r requirements.txt
 
 COPY . .
 
-CMD [ "gunicorn", "app.main:app", "--workers", "2", "--worker-class", "uvicorn.workers.UvicornWorker", "--build=0.0.0.0:8000"]
+RUN chmod a+x /weather/docker/*.sh

@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Response, Depends
-from exceptions import UserAlreadyExistsException, IncorrectEmailOrPasswordException
-from users.schemas import SUsersRegister, SUsersAuth, SUsersRead
-from users.service import UsersService
-from users.models import Users
-from users.auth import get_password_hash, authenticate_user, create_access_token
-from users.dependencies import get_current_user
+from app.exceptions import UserAlreadyExistsException, IncorrectEmailOrPasswordException
+from app.users.schemas import SUsersRegister, SUsersAuth, SUsersRead
+from app.users.service import UsersService
+from app.users.models import Users
+from app.users.auth import get_password_hash, authenticate_user, create_access_token
+from app.users.dependencies import get_current_user
 
 
 router = APIRouter(
