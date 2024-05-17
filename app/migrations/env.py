@@ -5,8 +5,8 @@ from sqlalchemy import pool
 
 from alembic import context
 
-from app.database import Base
-from app.config import settings
+from database import Base
+from config import settings
 from app.clothes.models import Clothes
 from app.clothes_types.models import ClothesTypes
 from app.users.models import Users
