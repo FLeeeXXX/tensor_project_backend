@@ -28,7 +28,7 @@ async def login_user(response: Response, user_data: SUsersAuth) -> SUsersRead:
     if not user:
         raise IncorrectEmailOrPasswordException
     access_token, expire = create_access_token({"sub": str(user.Users.id)})
-    response.set_cookie("weather_access_token", access_token, httponly=True, samesite=None, max_age=120)
+    response.set_cookie("weather_access_token", access_token, secure=True, httponly=True, samesite='none', expires=expire.strftime("%a, %d %b %Y %H:%M:%S GMT"))
     return SUsersRead.from_orm(user.Users)
 
 
