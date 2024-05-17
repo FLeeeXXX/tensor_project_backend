@@ -2,3 +2,4 @@
 app/__pycache__/config.cpython-311.pyc
 *.pyc
 /venv
+.vscode/PythonImportHelper-v2-Completion.json

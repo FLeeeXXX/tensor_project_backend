@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends
-# from fastapi_cache import FastAPICache
-# from fastapi_cache.backends.redis import RedisBackend
-# from fastapi_cache.decorator import cache
-# from redis import asyncio as aioredis
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
+from fastapi_cache.decorator import cache
+from redis import asyncio as aioredis
+from app.config import settings
 from app.cities.schemas import SCity
 from app.openweather.schemas import SWeather
 from app.openweather.weather import get_weather_city
@@ -34,13 +35,14 @@ async def get_weather(lat: str, lon: str) -> list[SWeather]:
 
 # Загрузка redis и городов при старте сервера
 # Возможно сделано через костыли, но пока не знаю как сделать по другому
-# @router.on_event("startup")
-# async def load_cities():
-#     global cache_backend
-#     redis = aioredis.from_url("redis://localhost")
-#     cache_backend = RedisBackend(redis)
-#     FastAPICache.init(cache_backend, prefix="fastapi-cache")
-#     with open('../cities.json', 'r', encoding='utf-8-sig') as f:
-#         city_data = json.load(f)
-#         cities = city_data if isinstance(city_data, list) else city_data.get("city", [])
-#         await cache_backend.set("cities", json.dumps(cities))
+@router.on_event("startup")
+async def load_cities():
+    global cache_backend
+    redis = aioredis.from_url(settings.REDIS_URL)
+    print(redis)
+    # cache_backend = RedisBackend(redis)
+    # FastAPICache.init(cache_backend, prefix="fastapi-cache")
+    # with open('../cities.json', 'r', encoding='utf-8-sig') as f:
+    #     city_data = json.load(f)
+    #     cities = city_data if isinstance(city_data, list) else city_data.get("city", [])
+    #     await cache_backend.set("cities", json.dumps(cities))

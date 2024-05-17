@@ -1,16 +1,29 @@
-version: '3.7'
+version: '3.8'
 services:
   db:
-    image: postgres:16
+    image: postgres:15.2
+    restart: 'unless-stopped'
     container_name: weather_db
-    env_file:
-      - .env
+    environment:
+      POSTGRES_DB: 'weather'
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'postgres'
     ports:
       - 5432:5432
-  
+
   redis:
     image: redis:7
     container_name: weather_redis
+
+  db_migration:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: 'on-failure'
+    depends_on:
+      - db
+    env_file: .env
+    command: sh -c "python3 -m alembic upgrade head"
 
   weather:
     build:
@@ -18,9 +31,9 @@ services:
     container_name: weather_app
     env_file:
       - .env
+    ports:
+      - 8000:8000
     depends_on:
       - db
       - redis
-    command: ["bash/weather/docker/app.sh"]
-    ports:
-      - 7777:9000
+      - db_migration
