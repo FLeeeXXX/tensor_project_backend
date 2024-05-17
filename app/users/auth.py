@@ -20,7 +20,7 @@ def create_access_token(data: dict) -> str:
     encoded_jwt = jwt.encode(
         to_encode, settings.SECRET_KEY, settings.HASH_ALGORITHM
     )
-    return encoded_jwt
+    return encoded_jwt, expire
 
 async def authenticate_user(email: EmailStr, password: str):
     user = await UsersService.find_one_or_none(email=email)
