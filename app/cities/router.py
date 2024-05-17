@@ -41,7 +41,7 @@ async def load_cities():
     redis = aioredis.from_url(settings.REDIS_URL)
     cache_backend = RedisBackend(redis)
     FastAPICache.init(cache_backend, prefix="fastapi-cache")
-    with open('../cities.json', 'r', encoding='utf-8-sig') as f:
+    with open('./cities.json', 'r', encoding='utf-8-sig') as f:
         city_data = json.load(f)
         cities = city_data if isinstance(city_data, list) else city_data.get("city", [])
         await cache_backend.set("cities", json.dumps(cities))
