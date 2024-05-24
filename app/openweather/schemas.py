@@ -8,6 +8,7 @@ class SWeatherPeriod(BaseModel):
     temp_min: int
     temp_max: int
     weather: str
+    weather_id: int
 
 
 class SWeather(BaseModel):
