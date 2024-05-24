@@ -1,5 +1,5 @@
 import enum
 
 class GenderEnum(enum.Enum):
-    male = 'Мужчина',
+    male = 'Мужчина'
     female = 'Женщина'
