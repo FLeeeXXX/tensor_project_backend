@@ -12,6 +12,6 @@ RUN pip install -r requirements.txt
 COPY . .
 
 # Если юзаем только dockerfile без docker-compose (команда для запуска docker compose up -d --build)
-RUN alembic downgrade -1
+RUN alembic downgrade head
 
 CMD gunicorn app.main:app --workers 1 --worker-class uvicorn.workers.UvicornWorker --bind=0.0.0.0:8000
