@@ -33,7 +33,7 @@ def filter_weather(data: object) -> list[SWeather]:
                 "temp_min": round(item['main']['temp_min'], 0),
                 "temp_max": round(item['main']['temp_max'], 0),
                 "weather": item['weather'][0]['description'],
-                "periods": {}
+                "periods": []
             })
 
         time = datetime.strptime(item['dt_txt'], "%Y-%m-%d %H:%M:%S")
@@ -50,43 +50,46 @@ def filter_weather(data: object) -> list[SWeather]:
         elif 18 <= time.hour < 24:
             period = 'Вечером'
 
-        if period and period not in result[-1]['periods']:
-            result[-1]['periods'][period] = {
-                'wind_speed': round(item['wind']['speed'], 0),
-                'humidity': round(item['main']['humidity'], 0),
-                'feels_like': round(item['main']['feels_like'], 0),
-                'temp_min': round(item['main']['temp_min'], 0),
-                'temp_max': round(item['main']['temp_max'], 0),
-                'weather': item['weather'][0]['description'],
-                'weather_id': item['weather'][0]['id'],
-                'weather_counts': {item['weather'][0]['description']: 1},
-                'weather_counts_id': {item['weather'][0]['id']: 1},
-                'count': 1
-            }
-        elif period:
-            result[-1]['periods'][period]['wind_speed'] += round(item['wind']['speed'], 0)
-            result[-1]['periods'][period]['humidity'] += round(item['main']['humidity'], 0)
-            result[-1]['periods'][period]['feels_like'] += round(item['main']['feels_like'], 0)
-            result[-1]['periods'][period]['temp_min'] = round(min(result[-1]['periods'][period]['temp_min'], item['main']['temp_min']), 0)
-            result[-1]['periods'][period]['temp_max'] = round(max(result[-1]['periods'][period]['temp_max'], item['main']['temp_max']), 0)
-            result[-1]['periods'][period]['count'] += 1
+        if period:
+            period_data = next((p for p in result[-1]['periods'] if p['period'] == period), None)
+            if not period_data:
+                period_data = {
+                    'period': period,
+                    'wind_speed': round(item['wind']['speed'], 0),
+                    'humidity': round(item['main']['humidity'], 0),
+                    'feels_like': round(item['main']['feels_like'], 0),
+                    'temp_min': round(item['main']['temp_min'], 0),
+                    'temp_max': round(item['main']['temp_max'], 0),
+                    'weather': item['weather'][0]['description'],
+                    'weather_id': item['weather'][0]['id'],
+                    'count': 1,
+                    'weather_counts': {},
+                    'weather_counts_id': {}
+                }
+                result[-1]['periods'].append(period_data)
+            else:
+                period_data['wind_speed'] += round(item['wind']['speed'], 0)
+                period_data['humidity'] += round(item['main']['humidity'], 0)
+                period_data['feels_like'] += round(item['main']['feels_like'], 0)
+                period_data['temp_min'] = round(min(period_data['temp_min'], item['main']['temp_min']), 0)
+                period_data['temp_max'] = round(max(period_data['temp_max'], item['main']['temp_max']), 0)
+                period_data['count'] += 1
 
-            weather_counts = result[-1]['periods'][period]['weather_counts']
-            weather_counts_id = result[-1]['periods'][period]['weather_counts_id']
-            weather_counts[item['weather'][0]['description']] = weather_counts.get(item['weather'][0]['description'], 0) + 1
-            weather_counts_id[item['weather'][0]['id']] = weather_counts_id.get(item['weather'][0]['id'], 0) + 1
-            most_common_weather = max(weather_counts.items(), key=lambda x: x[1])[0]
-            most_common_weather_id = max(weather_counts_id.items(), key=lambda x: x[1])[0]
-            result[-1]['periods'][period]['weather'] = most_common_weather
-            result[-1]['periods'][period]['weather_id'] = most_common_weather_id
+                period_data['weather_counts'][item['weather'][0]['description']] = period_data['weather_counts'].get(item['weather'][0]['description'], 0) + 1
+                period_data['weather_counts_id'][item['weather'][0]['id']] = period_data['weather_counts_id'].get(item['weather'][0]['id'], 0) + 1
+
+                most_common_weather = max(period_data['weather_counts'].items(), key=lambda x: x[1])[0]
+                most_common_weather_id = max(period_data['weather_counts_id'].items(), key=lambda x: x[1])[0]
+                period_data['weather'] = most_common_weather
+                period_data['weather_id'] = most_common_weather_id
 
     for idx, value in enumerate(result):
-        for period, data in value['periods'].items():
-            data['wind_speed'] = round(data['wind_speed'] / data['count'], 0)
-            data['humidity'] = round(data['humidity'] / data['count'], 0)
-            data['feels_like'] = round(data['feels_like'] / data['count'], 0)
-            del data['count']
-            del data['weather_counts']
-            del data['weather_counts_id']
+        for period_data in value['periods']:
+            period_data['wind_speed'] = round(period_data['wind_speed'] / period_data['count'], 0)
+            period_data['humidity'] = round(period_data['humidity'] / period_data['count'], 0)
+            period_data['feels_like'] = round(period_data['feels_like'] / period_data['count'], 0)
+            del period_data['count']
+            del period_data['weather_counts']
+            del period_data['weather_counts_id']
 
     return result
