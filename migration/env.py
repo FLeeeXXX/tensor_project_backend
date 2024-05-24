@@ -8,6 +8,7 @@ from app.clothes.models import Clothes
 from app.clothes_types.models import ClothesTypes
 from app.users.models import Users
 from app.weathers.models import Weathers
+from app.weather_labels.models import Weather_labels
 from app.database import Base
 
 from alembic import context
