@@ -58,7 +58,9 @@ def filter_weather(data: object) -> list[SWeather]:
                 'temp_min': round(item['main']['temp_min'], 0),
                 'temp_max': round(item['main']['temp_max'], 0),
                 'weather': item['weather'][0]['description'],
+                'weather_id': item['weather'][0]['id'],
                 'weather_counts': {item['weather'][0]['description']: 1},
+                'weather_counts_id': {item['weather'][0]['id']: 1},
                 'count': 1
             }
         elif period:
@@ -70,9 +72,13 @@ def filter_weather(data: object) -> list[SWeather]:
             result[-1]['periods'][period]['count'] += 1
 
             weather_counts = result[-1]['periods'][period]['weather_counts']
+            weather_counts_id = result[-1]['periods'][period]['weather_counts_id']
             weather_counts[item['weather'][0]['description']] = weather_counts.get(item['weather'][0]['description'], 0) + 1
+            weather_counts_id[item['weather'][0]['id']] = weather_counts_id.get(item['weather'][0]['id'], 0) + 1
             most_common_weather = max(weather_counts.items(), key=lambda x: x[1])[0]
+            most_common_weather_id = max(weather_counts_id.items(), key=lambda x: x[1])[0]
             result[-1]['periods'][period]['weather'] = most_common_weather
+            result[-1]['periods'][period]['weather_id'] = most_common_weather_id
 
     for idx, value in enumerate(result):
         for period, data in value['periods'].items():
@@ -81,5 +87,6 @@ def filter_weather(data: object) -> list[SWeather]:
             data['feels_like'] = round(data['feels_like'] / data['count'], 0)
             del data['count']
             del data['weather_counts']
+            del data['weather_counts_id']
 
     return result
