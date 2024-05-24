@@ -2,6 +2,7 @@ from pydantic import BaseModel, Field
 
 
 class SWeatherPeriod(BaseModel):
+    period: str
     wind_speed: float
     humidity: int
     feels_like: float
@@ -16,5 +17,4 @@ class SWeather(BaseModel):
     temp_min: int
     temp_max: int
     weather: str
-    periods: dict[str, SWeatherPeriod]
-    
+    periods: list[SWeatherPeriod]
