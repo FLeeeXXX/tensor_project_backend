@@ -1,4 +1,5 @@
 from pydantic import BaseModel, EmailStr
+from app.users.enum import GenderEnum
 
 
 class SUsersRegister(BaseModel):
@@ -24,6 +25,7 @@ class SUsersRead(BaseModel):
     email: EmailStr
     login: str
     city: str
+    gender: GenderEnum
 
 
     class Config:

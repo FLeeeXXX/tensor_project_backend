@@ -1,7 +1,8 @@
 from app.database import Base
-from sqlalchemy import Column, Integer, String, ForeignKey, Table, Enum
-from sqlalchemy.orm import relationship, Mapped, mapped_column, DeclarativeBase
+from sqlalchemy import Column, Integer, String, ForeignKey, Table
+from sqlalchemy.orm import relationship
 from app.users.enum import GenderEnum
+from sqlalchemy.dialects.postgresql import ENUM as PgEnum
 
 clothes_weatherLabels_association = Table(
     'clothes_weatherLabels_association',
@@ -17,7 +18,16 @@ class Clothes(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
     type = Column(Integer, ForeignKey("clothes_types.id"), nullable=False)
-    gender = Column(Enum(GenderEnum), default=GenderEnum.male, nullable=False)
+    gender = Column(
+        PgEnum(
+            GenderEnum, 
+            name="users_gender_enum", 
+            create_type=False,
+            values_callable=lambda e: [field.value for field in e],
+            ), 
+            nullable=False, 
+            default=GenderEnum.MALE
+        )
     temp_min = Column(Integer, nullable=False)
     temp_max = Column(Integer, nullable=False)
     weather_lable = relationship("WeatherLabels", secondary=clothes_weatherLabels_association)
