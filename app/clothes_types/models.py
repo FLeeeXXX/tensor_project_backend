@@ -5,4 +5,4 @@ class ClothesTypes(Base):
     __tablename__ = "clothes_types"
 
     id = Column(Integer, primary_key=True)
-    type = Column(String, nullable=False, unique=True)
+    clothes_type = Column(String, nullable=False, unique=True)
