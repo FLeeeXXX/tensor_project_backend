@@ -4,6 +4,7 @@ from app.config import settings
 from app.openweather.schemas import SWeather
 from datetime import datetime
 from app.clothes.service import ClothesService
+from app.users.enum import GenderEnum
 
 
 # Может быть можно обыграть зависимостями, если нет, то файл переименовать
@@ -125,13 +126,15 @@ async def filter_weather(data: object):
                 4:"feet"
             }
             
-            # for clothe in clothes:
-            #     if clothe['gender'] == "Мужчина":
-            #         clothes_dict['male'][clothes_types_dict[clothe.type]].append(clothe.name)
-            #     else:
-            #         clothes_dict['female'][clothes_types_dict[clothe.type]].append(clothe.name)
+            for clothe in clothes:
+                body_part_key = clothes_types_dict[clothe.type]
 
-            period_data['clothes'] = clothes
+                if clothe.gender == GenderEnum.MALE.value:
+                    clothes_dict['male'][body_part_key].append(clothe.name)
+                else:
+                    clothes_dict['female'][body_part_key].append(clothe.name)
+
+            period_data['clothes'] = clothes_dict
 
 
     return result
