@@ -18,7 +18,7 @@ class ClothesService(BaseService):
 					cls.model, 
 					ClothesTypes.clothes_type
 				)
-				.join(ClothesTypes, cls.model.type == ClothesTypes.clothes_type)
+				.join(ClothesTypes, cls.model.type == ClothesTypes.id)
 				.join(clothes_weatherLabels_association)
 				.join(Weathers)
 				.join(Weather_labels)
