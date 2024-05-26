@@ -22,4 +22,4 @@ class ClothesService(BaseService):
 			)
 
             result = await session.execute(query)
-            return result.mappings().all()
+            return result.scalars().all()
