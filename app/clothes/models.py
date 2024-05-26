@@ -30,4 +30,4 @@ class Clothes(Base):
         )
     temp_min = Column(Integer, nullable=False)
     temp_max = Column(Integer, nullable=False)
-    weather_lable = relationship("WeatherLabels", secondary=clothes_weatherLabels_association)
+    weather_lable = relationship("Weather_labels", secondary=clothes_weatherLabels_association)
