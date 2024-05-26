@@ -12,7 +12,7 @@ async def get_weather_city(lat: str, lon: str) -> list[SWeather]:
     open_weather_client = OpenWeatherHTTPClient(base_url="https://api.openweathermap.org",
                                                 api_key=settings.OW_KEY)
     data = await open_weather_client.get_weather(lat=lat, lon=lon)
-    return filter_weather(data)
+    return await filter_weather(data)
 
 
 async def filter_weather(data: object):
