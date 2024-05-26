@@ -12,7 +12,7 @@ class ClothesService(BaseService):
     async def get_clothes_for_weather(cls, weather_id: int, feels_like: int, month: int):
         async with async_session_maker() as session:
             query = (
-				select(cls.model)
+				select(cls.model, Weathers.name.label('season'), Weather_labels.name.label('weather_label'))
 				.join(clothes_weatherLabels_association)
 				.join(Weathers)
 				.join(Weather_labels)
