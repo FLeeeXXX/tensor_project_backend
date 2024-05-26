@@ -3,6 +3,8 @@ from app.openweather.service import OpenWeatherHTTPClient
 from app.config import settings
 from app.openweather.schemas import SWeather
 from datetime import datetime
+from app.clothes.service import ClothesService
+
 
 # Может быть можно обыграть зависимостями, если нет, то файл переименовать
 @cache(expire=120)
@@ -13,7 +15,7 @@ async def get_weather_city(lat: str, lon: str) -> list[SWeather]:
     return filter_weather(data)
 
 
-def filter_weather(data: object) -> list[SWeather]:
+async def filter_weather(data: object):
     result = []
 
     for item in data['list']:
@@ -91,5 +93,15 @@ def filter_weather(data: object) -> list[SWeather]:
             del period_data['count']
             del period_data['weather_counts']
             del period_data['weather_counts_id']
+
+
+            weather_id = int(period_data['weather_id'])
+            feels_like = int(period_data['feels_like'])
+            month = int(time.month)
+
+            clothes = await ClothesService.get_clothes_for_weather(weather_id=weather_id, feels_like=feels_like, month=month)
+
+            period_data['clothes'] = clothes
+
 
     return result

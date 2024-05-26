@@ -28,7 +28,7 @@ async def get_cities(city: str) -> list[SCity]:
 
 @router.get("/get_weather")
 @cache(expire=120)
-async def get_weather(lat: str, lon: str) -> list[SWeather]:
+async def get_weather(lat: str, lon: str):
     return await get_weather_city(lat=lat, lon=lon)
 
 
