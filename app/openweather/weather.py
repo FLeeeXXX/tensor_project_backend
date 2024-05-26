@@ -101,6 +101,8 @@ async def filter_weather(data: object):
 
             clothes = await ClothesService.get_clothes_for_weather(weather_id=weather_id, feels_like=feels_like, month=month)
 
+            # ПОТОМ ПОМЕНЯТЬ НИЖНЮЮ ЧАСТЬ!
+
             clothes_dict = {
                 "male":{
                     "head":[],
@@ -116,11 +118,20 @@ async def filter_weather(data: object):
                 },
             }
 
-            # for clothe in clothes:
-            #     if clothe.gender == "Мужчина":
-            #         if clothe.type == 
+            clothes_types_dict = {
+                1:"head",
+                2:"body",
+                3:"legs",
+                4:"feet"
+            }
+            
+            for clothe in clothes:
+                if clothe.gender == "Мужчина":
+                    clothes_dict['male'][clothes_types_dict[clothe.type]].append(clothe.name)
+                else:
+                    clothes_dict['female'][clothes_types_dict[clothe.type]].append(clothe.name)
 
-            period_data['clothes'] = clothes
+            period_data['clothes'] = clothes_dict
 
 
     return result
