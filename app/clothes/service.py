@@ -13,12 +13,12 @@ class ClothesService(BaseService):
         async with async_session_maker() as session:
             query = (
 				select(cls.model)
-				# .join(clothes_weatherLabels_association)
-				# .join(Weathers)
-				# .join(Weather_labels)
-				# .filter(Weathers.id == (int(month%12/3) + 1))
-				# .filter(Weather_labels.id == weather_id)
-				# .filter(and_(Clothes.temp_min <= feels_like, Clothes.temp_max >= feels_like))
+				.join(clothes_weatherLabels_association)
+				.join(Weathers)
+				.join(Weather_labels)
+				.filter(Weathers.id == (int(month%12/3) + 1))
+				.filter(Weather_labels.id == weather_id)
+				.filter(and_(Clothes.temp_min <= feels_like, Clothes.temp_max >= feels_like))
 			)
 
             result = await session.execute(query)
