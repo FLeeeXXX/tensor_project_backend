@@ -126,7 +126,7 @@ async def filter_weather(data: object):
             }
             
             for clothe in clothes:
-                if clothe.gender == "Мужчина":
+                if clothe['gender'] == "Мужчина":
                     clothes_dict['male'][clothes_types_dict[clothe.type]].append(clothe.name)
                 else:
                     clothes_dict['female'][clothes_types_dict[clothe.type]].append(clothe.name)
