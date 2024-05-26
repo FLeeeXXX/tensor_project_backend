@@ -118,7 +118,7 @@ async def filter_weather(data: object):
 
             # for clothe in clothes:
             #     if clothe.gender == "Мужчина":
-            #         if clothe.gender.type == 
+            #         if clothe.type == 
 
             period_data['clothes'] = clothes
 
