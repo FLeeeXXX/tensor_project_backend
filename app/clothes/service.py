@@ -4,8 +4,6 @@ from app.database import async_session_maker
 from sqlalchemy import select, and_
 from app.weathers.models import Weathers
 from app.weather_labels.models import Weather_labels
-from app.clothes_types.models import ClothesTypes
-
 
 class ClothesService(BaseService):
     model = Clothes
@@ -14,11 +12,7 @@ class ClothesService(BaseService):
     async def get_clothes_for_weather(cls, weather_id: int, feels_like: int, month: int):
         async with async_session_maker() as session:
             query = (
-				select(
-					cls.model, 
-					ClothesTypes.clothes_type
-				)
-				.join(ClothesTypes, cls.model.type == ClothesTypes.id)
+				select(cls.model)
 				.join(clothes_weatherLabels_association)
 				.join(Weathers)
 				.join(Weather_labels)
@@ -28,4 +22,4 @@ class ClothesService(BaseService):
 			)
 
             result = await session.execute(query)
-            return result.scalars().all()
+            return result.mappings().all()
