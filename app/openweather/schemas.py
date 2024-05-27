@@ -1,6 +1,16 @@
 from pydantic import BaseModel, Field
 
 
+class SWeatherPartsOfBody(BaseModel):
+    head: list
+    body: list
+    legs: list
+    feet: list
+
+class SWeatherClothes(BaseModel):
+    male: SWeatherPartsOfBody
+    female: SWeatherPartsOfBody
+
 class SWeatherPeriod(BaseModel):
     period: str
     wind_speed: float
@@ -10,6 +20,7 @@ class SWeatherPeriod(BaseModel):
     temp_max: int
     weather: str
     weather_id: int
+    clothes: list[SWeatherClothes]
 
 
 class SWeather(BaseModel):

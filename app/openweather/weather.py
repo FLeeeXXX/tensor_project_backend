@@ -17,7 +17,7 @@ async def get_weather_city(lat: str, lon: str) -> list[SWeather]:
     return await filter_weather(data)
 
 
-async def filter_weather(data: object):
+async def filter_weather(data: object) -> SWeather:
     result = []
 
     for item in data['list']:
