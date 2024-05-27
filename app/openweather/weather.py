@@ -5,6 +5,7 @@ from app.openweather.schemas import SWeather
 from datetime import datetime
 from app.clothes.service import ClothesService
 from app.users.enum import GenderEnum
+from app.database import engine
 
 
 # Может быть можно обыграть зависимостями, если нет, то файл переименовать
@@ -129,9 +130,9 @@ async def filter_weather(data: object):
             for clothe in clothes:
                 body_part_key = clothes_types_dict[clothe.type]
                 
-                if clothe.gender.value == GenderEnum.MALE.value:
+                if clothe.gender.value == GenderEnum.MALE.value and clothe.name not in clothes_dict['male'][body_part_key]:
                     clothes_dict['male'][body_part_key].append(clothe.name)
-                else:
+                elif clothe.gender.value == GenderEnum.FEMALE.value and clothe.name not in clothes_dict['female'][body_part_key]:
                     clothes_dict['female'][body_part_key].append(clothe.name)
 
             period_data['clothes'] = clothes_dict
