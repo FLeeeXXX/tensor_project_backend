@@ -125,29 +125,16 @@ async def filter_weather(data: object):
                 3:"legs",
                 4:"feet"
             }
-            
-            test_dict = {
-                "clotheGender":[],
-                "enumGender":[],
-                "equals":[],
-                "equalsMale":[],
-                "typeClothe":[]
-            }
 
             for clothe in clothes:
                 body_part_key = clothes_types_dict[clothe.type]
-
-                test_dict['clotheGender'].append(clothe.gender)
-                test_dict['enumGender'].append(GenderEnum.MALE.value)
-                test_dict['equals'].append(clothe.gender.value == GenderEnum.MALE.value)
-                test_dict['equalsMale'].append(clothe.gender == GenderEnum.MALE)
                 
-                # if clothe.gender == GenderEnum.MALE.value:
-                #     clothes_dict['male'][body_part_key].append(clothe.name)
-                # else:
-                #     clothes_dict['female'][body_part_key].append(clothe.name)
+                if clothe.gender.value == GenderEnum.MALE.value:
+                    clothes_dict['male'][body_part_key].append(clothe.name)
+                else:
+                    clothes_dict['female'][body_part_key].append(clothe.name)
 
-            period_data['clothes'] = test_dict
+            period_data['clothes'] = clothes_dict
 
 
     return result
