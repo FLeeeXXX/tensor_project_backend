@@ -146,7 +146,7 @@ async def filter_weather(data: object):
                 # else:
                 #     clothes_dict['female'][body_part_key].append(clothe.name)
 
-            period_data['clothes'] = clothes_dict
+            period_data['clothes'] = test_dict
 
 
     return result
