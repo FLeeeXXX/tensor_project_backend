@@ -2,10 +2,10 @@ from pydantic import BaseModel, Field
 
 
 class SWeatherPartsOfBody(BaseModel):
-    head: list
-    body: list
-    legs: list
-    feet: list
+    head: list[str]
+    body: list[str]
+    legs: list[str]
+    feet: list[str]
 
 class SWeatherClothes(BaseModel):
     male: SWeatherPartsOfBody
@@ -20,7 +20,7 @@ class SWeatherPeriod(BaseModel):
     temp_max: int
     weather: str
     weather_id: int
-    clothes: list[SWeatherClothes]
+    clothes: SWeatherClothes
 
 
 class SWeather(BaseModel):
