@@ -49,4 +49,4 @@ class UserNotFoundException(UnauthorizedException):
 
 
 class ServerNetworkException(ServerException):
-    detail = "Внутренняя ошибка сервера при получении погоды"
+    detail = "Внутренняя ошибка сервера"

@@ -25,8 +25,6 @@ async def register_user(user_data: SUsersRegister) -> None:
 @router.post("/login")
 async def login_user(response: Response, user_data: SUsersAuth) -> SUsersRead:
     user = await authenticate_user(user_data.email, user_data.password)
-    if not user:
-        raise IncorrectEmailOrPasswordException
     access_token, expire = create_access_token({"sub": str(user.Users.id)})
     response.set_cookie("weather_access_token", access_token, secure=True, httponly=True, samesite='none', expires=expire.strftime("%a, %d %b %Y %H:%M:%S GMT"))
     return SUsersRead.from_orm(user.Users)

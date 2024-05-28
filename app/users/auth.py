@@ -4,6 +4,7 @@ from pydantic import EmailStr
 from passlib.context import CryptContext
 from app.users.service import UsersService
 from app.config import settings
+from app.exceptions import IncorrectEmailOrPasswordException
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -25,6 +26,6 @@ def create_access_token(data: dict) -> str:
 async def authenticate_user(email: EmailStr, password: str):
     user = await UsersService.find_one_or_none(email=email)
     if (not user) or (not verify_password(password, user.Users.password)):
-        return None
+        raise IncorrectEmailOrPasswordException
     return user
     
