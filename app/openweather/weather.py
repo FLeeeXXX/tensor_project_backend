@@ -1,7 +1,7 @@
 from fastapi_cache.decorator import cache
 from app.openweather.service import OpenWeatherHTTPClient
 from app.config import settings
-from app.openweather.schemas import SWeather
+from app.openweather.schemas import SWeather, SWeatherClothes
 from datetime import datetime
 from app.clothes.service import ClothesService
 from app.users.enum import GenderEnum
@@ -16,7 +16,45 @@ async def get_weather_city(lat: str, lon: str) -> list[SWeather]:
     data = await open_weather_client.get_weather(lat=lat, lon=lon)
     return await filter_weather(data)
 
+@cache(expire=120)
+async def get_clothes(weather_id: int, feels_like: int, month: int) -> SWeatherClothes:
+    clothes = await ClothesService.get_clothes_for_weather(weather_id=weather_id, feels_like=feels_like, month=month)
 
+    # ПОТОМ ПОМЕНЯТЬ НИЖНЮЮ ЧАСТЬ!
+
+    clothes_dict = {
+        "male":{
+            "head":[],
+            "body":[],
+            "legs":[],
+            "feet":[]
+        },
+        "female":{
+            "head":[],
+            "body":[],
+            "legs":[],
+            "feet":[]
+        },
+    }
+
+    clothes_types_dict = {
+        1:"head",
+        2:"body",
+        3:"legs",
+        4:"feet"
+    }
+
+    for clothe in clothes:
+        body_part_key = clothes_types_dict[clothe.type]
+        
+        if clothe.gender.value == GenderEnum.MALE.value and clothe.name not in clothes_dict['male'][body_part_key]:
+            clothes_dict['male'][body_part_key].append(clothe.name)
+        elif clothe.gender.value == GenderEnum.FEMALE.value and clothe.name not in clothes_dict['female'][body_part_key]:
+            clothes_dict['female'][body_part_key].append(clothe.name)
+
+    return clothes_dict
+
+@cache(expire=120)
 async def filter_weather(data: object) -> list[SWeather]:
     result = []
 
@@ -101,41 +139,7 @@ async def filter_weather(data: object) -> list[SWeather]:
             feels_like = int(period_data['feels_like'])
             month = int(time.month)
 
-            clothes = await ClothesService.get_clothes_for_weather(weather_id=weather_id, feels_like=feels_like, month=month)
-
-            # ПОТОМ ПОМЕНЯТЬ НИЖНЮЮ ЧАСТЬ!
-
-            clothes_dict = {
-                "male":{
-                    "head":[],
-                    "body":[],
-                    "legs":[],
-                    "feet":[]
-                },
-                "female":{
-                    "head":[],
-                    "body":[],
-                    "legs":[],
-                    "feet":[]
-                },
-            }
-
-            clothes_types_dict = {
-                1:"head",
-                2:"body",
-                3:"legs",
-                4:"feet"
-            }
-
-            for clothe in clothes:
-                body_part_key = clothes_types_dict[clothe.type]
-                
-                if clothe.gender.value == GenderEnum.MALE.value and clothe.name not in clothes_dict['male'][body_part_key]:
-                    clothes_dict['male'][body_part_key].append(clothe.name)
-                elif clothe.gender.value == GenderEnum.FEMALE.value and clothe.name not in clothes_dict['female'][body_part_key]:
-                    clothes_dict['female'][body_part_key].append(clothe.name)
-
-            period_data['clothes'] = clothes_dict
+            period_data['clothes'] = await get_clothes(weather_id, feels_like, month)
 
 
     return result
