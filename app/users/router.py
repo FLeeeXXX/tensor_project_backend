@@ -33,5 +33,5 @@ async def login_user(user_data: SUsersAuth):
 
 
 @router.get("/me")
-async def read_user_me(user: Users = Depends(get_current_user)) -> SUsersRead:
+async def get_user(user: Users = Depends(get_current_user)) -> SUsersRead:
     return user

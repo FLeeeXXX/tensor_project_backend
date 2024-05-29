@@ -1,4 +1,5 @@
-from fastapi import Request, Depends
+from fastapi import Depends
+from fastapi.security import OAuth2PasswordBearer
 from app.exceptions import TokenExpiredException, TokenAbsentException, IncorrectTokenFormatException, UserNotFoundException
 from jose import jwt, JWTError
 from app.config import settings
@@ -12,9 +13,10 @@ from app.users.schemas import SUsersRead
 #     if token == None:
 #         raise TokenAbsentException
 #     return token
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 
-async def get_current_user(access_token: str) -> SUsersRead:
+async def get_current_user(access_token: str = Depends(oauth2_scheme)) -> SUsersRead:
     try:
         payload = jwt.decode(
             access_token,  settings.SECRET_KEY, settings.HASH_ALGORITHM
