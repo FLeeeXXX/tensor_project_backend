@@ -19,6 +19,7 @@ def add_period_data(periods, item):
             periods.append(period_data)
         else:
             update_period_data(period_data, item)
+    
 
 
 def get_period(hour):
@@ -29,6 +30,7 @@ def get_period(hour):
     elif 18 <= hour < 24:
         return 'Вечером'
     return ''
+
 
 
 def create_period_data(item, period):
@@ -45,6 +47,7 @@ def create_period_data(item, period):
         'weather_counts': {item['weather'][0]['description']: 1},
         'weather_counts_id': {item['weather'][0]['id']: 1}
     }
+
 
 
 def update_period_data(period_data, item):
@@ -65,6 +68,8 @@ def update_period_data(period_data, item):
     period_data['weather'] = most_common_weather
     period_data['weather_id'] = most_common_weather_id
 
+
+
 def finalize_period_data(period_data):
     period_data['wind_speed'] = round(period_data['wind_speed'] / period_data['count'], 0)
     period_data['humidity'] = round(period_data['humidity'] / period_data['count'], 0)
@@ -72,6 +77,7 @@ def finalize_period_data(period_data):
     del period_data['count']
     del period_data['weather_counts']
     del period_data['weather_counts_id']
+
 
 
 @cache(expire=120)
@@ -98,6 +104,7 @@ async def get_clothes(weather_id: int, feels_like: int, month: int) -> SWeatherC
             clothes_dict[gender_key][body_part_key].append(clothe.name)
 
     return clothes_dict
+
 
 
 @cache(expire=120)
@@ -132,6 +139,7 @@ async def filter_weather(data: object) -> list[SWeather]:
             period_data['clothes'] = await get_clothes(weather_id, feels_like, month)
 
     return result
+
 
 
 # Может быть можно обыграть зависимостями, если нет, то файл переименовать
