@@ -11,13 +11,14 @@ app.include_router(cities_router)
 
 
 origins = [
-    "http://localhost:3000",
+    "https://tensor-project-frontend.onrender.com",
+    "https://tenzorprojectfront-syl7.onrender.com"
 ]
 
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://tensor-project-frontend.onrender.com","https://tenzorprojectfront-syl7.onrender.com"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

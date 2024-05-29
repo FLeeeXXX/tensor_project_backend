@@ -7,14 +7,14 @@ from app.users.service import UsersService
 from app.users.schemas import SUsersRead
 
 
-def get_token(request: Request) -> str:
-    token = request.cookies.get("weather_access_token")
-    if token == None:
-        raise TokenAbsentException
-    return token
+# def get_token(request: Request) -> str:
+#     token = request.cookies.get("weather_access_token")
+#     if token == None:
+#         raise TokenAbsentException
+#     return token
 
 
-async def get_current_user(access_token: str = Depends(get_token)) -> SUsersRead:
+async def get_current_user(access_token: str) -> SUsersRead:
     try:
         payload = jwt.decode(
             access_token,  settings.SECRET_KEY, settings.HASH_ALGORITHM

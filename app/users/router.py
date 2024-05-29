@@ -4,7 +4,7 @@ from app.users.schemas import SUsersRegister, SUsersAuth, SUsersRead
 from app.users.service import UsersService
 from app.users.models import Users
 from app.users.auth import get_password_hash, authenticate_user, create_access_token
-from app.users.dependencies import get_current_user, get_token
+from app.users.dependencies import get_current_user
 
 
 router = APIRouter(
@@ -21,16 +21,15 @@ async def register_user(user_data: SUsersRegister) -> None:
 
 # Добавить проверки на поля в авторизации
 @router.post("/login")
-async def login_user(response: Response, user_data: SUsersAuth) -> SUsersRead:
+async def login_user(user_data: SUsersAuth):
     user = await authenticate_user(user_data.email, user_data.password)
-    access_token, expire = create_access_token({"sub": str(user.Users.id)})
-    response.set_cookie("weather_access_token", access_token, secure=True, httponly=True, samesite='none', expires=expire.strftime("%a, %d %b %Y %H:%M:%S GMT"))
-    return SUsersRead.from_orm(user.Users)
+    access_token = create_access_token({"sub": str(user.Users.id)})
+    return {"access_token":access_token}
 
 
-@router.post("/logout")
-async def logout_user(response: Response, access_token: str = Depends(get_token)) -> None:
-    response.delete_cookie("weather_access_token")
+# @router.post("/logout")
+# async def logout_user(response: Response, access_token: str = Depends(get_token)) -> None:
+#     response.delete_cookie("weather_access_token")
 
 
 @router.get("/me")
