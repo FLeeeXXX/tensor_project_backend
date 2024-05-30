@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Response, Depends
 from app.exceptions import UserAlreadyExistsException
-from app.users.schemas import SUsersRegister, SUsersAuth, SUsersRead
+from app.users.schemas import SUsersRegister, SUsersAuth, SUsersRead, Token
 from app.users.service import UsersService
 from app.users.models import Users
 from app.users.auth import get_password_hash, authenticate_user, create_access_token
@@ -21,10 +21,10 @@ async def register_user(user_data: SUsersRegister) -> None:
 
 # Добавить проверки на поля в авторизации
 @router.post("/login")
-async def login_user(user_data: SUsersAuth):
+async def login_user(user_data: SUsersAuth) -> Token:
     user = await authenticate_user(user_data.email, user_data.password)
     access_token = create_access_token({"sub": str(user.Users.id)})
-    return {"access_token":access_token}
+    return Token(access_token=access_token)
 
 
 # @router.post("/logout")

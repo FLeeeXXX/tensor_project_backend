@@ -8,11 +8,6 @@ from app.users.service import UsersService
 from app.users.schemas import SUsersRead
 
 
-# def get_token(request: Request) -> str:
-#     token = request.cookies.get("weather_access_token")
-#     if token == None:
-#         raise TokenAbsentException
-#     return token
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 
