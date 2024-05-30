@@ -37,9 +37,7 @@ class BaseService:
     async def change_by_id(cls, model_id, **data):
         async with async_session_maker() as session:
             query = update(cls.model).filter_by(id=model_id).values(**data)
-            result = await session.execute(query)
+            await session.execute(query)
             await session.commit()
-
-            return result.mappings().first()
         
         

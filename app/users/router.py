@@ -29,8 +29,7 @@ async def login_user(user_data: SUsersAuth) -> Token:
 
 @router.put("/change")
 async def change_user(data: SUsersRead, user: Users = Depends(get_current_user)):
-    user = await UsersService.change_by_id(user.id, **data.dict())
-    return user
+    await UsersService.change_by_id(user.id, **data.dict())
 
 
 # @router.post("/logout")
