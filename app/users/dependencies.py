@@ -32,4 +32,5 @@ async def get_current_user(access_token: str = Depends(oauth2_scheme)) -> SUsers
     if not user:
         raise UserNotFoundException
 
-    return SUsersRead.from_orm(user.Users)
+    # return SUsersRead.from_orm(user.Users)
+    return user.Users

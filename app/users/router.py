@@ -27,6 +27,12 @@ async def login_user(user_data: SUsersAuth) -> Token:
     return Token(access_token=access_token)
 
 
+@router.put("/change")
+async def change_user(data: SUsersRead, user: Users = Depends(get_current_user)):
+    user = await UsersService.change_by_id(user.id, **data.dict())
+    return user
+
+
 # @router.post("/logout")
 # async def logout_user(response: Response, access_token: str = Depends(get_token)) -> None:
 #     response.delete_cookie("weather_access_token")
@@ -34,4 +40,4 @@ async def login_user(user_data: SUsersAuth) -> Token:
 
 @router.get("/me")
 async def get_user(user: Users = Depends(get_current_user)) -> SUsersRead:
-    return user
+    return SUsersRead.from_orm(user)

@@ -1,5 +1,5 @@
 from app.database import async_session_maker
-from sqlalchemy import select, insert
+from sqlalchemy import select, insert, update
 
 class BaseService:
     model = None
@@ -32,4 +32,14 @@ class BaseService:
             query = insert(cls.model).values(**data)
             await session.execute(query)
             await session.commit()
+
+    @classmethod
+    async def change_by_id(cls, model_id, **data):
+        async with async_session_maker() as session:
+            query = update(cls.model).filter_by(id=model_id).values(**data)
+            result = await session.execute(query)
+            await session.commit()
+
+            return result.mappings().first()
+        
         
