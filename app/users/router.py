@@ -4,7 +4,7 @@ from app.users.schemas import SUsersRegister, SUsersAuth, SUsersRead, Token
 from app.users.service import UsersService
 from app.users.models import Users
 from app.users.auth import get_password_hash, authenticate_user, create_access_token
-from app.users.dependencies import get_current_user
+from app.users.dependencies import get_current_user, get_token
 
 
 router = APIRouter(
