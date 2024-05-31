@@ -8,6 +8,12 @@ class UnauthorizedException(HTTPException):
     def __init__(self):
         super().__init__(status_code=self.status_code, detail=self.detail)
 
+class UnprocessableContentException(HTTPException):
+    status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
+    detail = ""
+
+    def __init__(self):
+        super().__init__(status_code=self.status_code, detail=self.detail)
 
 class ConflictException(HTTPException):
     status_code = status.HTTP_409_CONFLICT
@@ -40,7 +46,7 @@ class TokenAbsentException(UnauthorizedException):
     detail = "Токен отсутствует"
 
 
-class IncorrectTokenFormatException(UnauthorizedException):
+class IncorrectTokenFormatException(UnprocessableContentException):
     detail = "Не верный формат токена"
 
 
@@ -50,3 +56,7 @@ class UserNotFoundException(UnauthorizedException):
 
 class ServerNetworkException(ServerException):
     detail = "Внутренняя ошибка сервера"
+
+
+class IncorrectDataException(UnprocessableContentException):
+    detail = "Не верный формат данных"
