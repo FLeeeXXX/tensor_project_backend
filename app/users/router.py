@@ -4,7 +4,8 @@ from app.users.schemas import SUsersRegister, SUsersAuth, SUsersRead, Token
 from app.users.service import UsersService
 from app.users.models import Users
 from app.users.auth import get_password_hash, authenticate_user, create_access_token
-from app.users.dependencies import get_current_user, get_token
+from app.users.dependencies import get_current_user
+from fastapi_cache.decorator import cache
 
 
 router = APIRouter(
@@ -27,11 +28,11 @@ async def login_user(user_data: SUsersAuth) -> Token:
 
 
 @router.put("/change")
-async def change_user(data: SUsersRead, user: Users = Depends(get_current_user)):
+async def change_user(data: SUsersRead, user: Users = Depends(get_current_user)) -> None:
     if await UsersService.change_by_id(user.id, **data.dict()) : raise IncorrectDataException
 
 
 @router.get("/me")
+@cache(expire=180)
 async def get_user(user: Users = Depends(get_current_user)) -> SUsersRead:
     return SUsersRead.from_orm(user)
-

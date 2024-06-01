@@ -6,6 +6,7 @@ from app.users.service import UsersService
 from app.config import settings
 from app.exceptions import IncorrectEmailOrPasswordException
 
+
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 

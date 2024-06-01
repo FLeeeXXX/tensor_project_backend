@@ -8,6 +8,7 @@ class UnauthorizedException(HTTPException):
     def __init__(self):
         super().__init__(status_code=self.status_code, detail=self.detail)
 
+
 class UnprocessableContentException(HTTPException):
     status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
     detail = ""
@@ -15,12 +16,14 @@ class UnprocessableContentException(HTTPException):
     def __init__(self):
         super().__init__(status_code=self.status_code, detail=self.detail)
 
+
 class ConflictException(HTTPException):
     status_code = status.HTTP_409_CONFLICT
     detail = ""
 
     def __init__(self):
         super().__init__(status_code=self.status_code, detail=self.detail)
+
 
 class ServerException(HTTPException):
     status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
