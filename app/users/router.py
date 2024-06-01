@@ -5,7 +5,6 @@ from app.users.service import UsersService
 from app.users.models import Users
 from app.users.auth import get_password_hash, authenticate_user, create_access_token
 from app.users.dependencies import get_current_user
-from fastapi_cache.decorator import cache
 
 
 router = APIRouter(
@@ -33,6 +32,5 @@ async def change_user(data: SUsersRead, user: Users = Depends(get_current_user))
 
 
 @router.get("/me")
-@cache(expire=180)
 async def get_user(user: Users = Depends(get_current_user)) -> SUsersRead:
     return SUsersRead.from_orm(user)
