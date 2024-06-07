@@ -1,4 +1,4 @@
-from app.mongo.mongo_base import MongoBaseService
+from app.mongo.base import MongoBaseService
 
 
 class CityService(MongoBaseService):
