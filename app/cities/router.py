@@ -1,8 +1,5 @@
 from fastapi import APIRouter, Depends
-from fastapi_cache import FastAPICache
-from fastapi_cache.backends.redis import RedisBackend
 from fastapi_cache.decorator import cache
-from redis import asyncio as aioredis
 from app.config import settings
 from app.cities.schemas import SCity
 from app.openweather.schemas import SWeather
