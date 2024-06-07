@@ -12,7 +12,7 @@ class MongoBaseService:
     @classmethod
     async def find_all(cls, **filter_by) -> list:
         collection = cls.get_collection()
-        cursor = collection.find(filter_by)
+        cursor = collection.find(filter_by, {'_id': 0})
         documents = await cursor.to_list(length=1000)
         return documents
 
